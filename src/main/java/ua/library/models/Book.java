@@ -1,14 +1,35 @@
 package ua.library.models;
 
 public class Book {
+    private int bookId;
+    private int personId;
     private String name;
     private String author;
-    private int age;
+    private int year;
 
-    public Book(String name, String author, int age) {
+    public Book(){}
+    public Book(int bookId, int personId, String name, String author, int year) {
+        this.bookId = bookId;
+        this.personId = personId;
         this.name = name;
         this.author = author;
-        this.age = age;
+        this.year = year;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(int bookId) {
+        this.bookId = bookId;
+    }
+
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
     }
 
     public String getName() {
@@ -27,11 +48,11 @@ public class Book {
         this.author = author;
     }
 
-    public int getAge() {
-        return age;
+    public int getYear() {
+        return year;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setYear(int year) {
+        this.year = year;
     }
 }

@@ -5,16 +5,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.library.DAO.BookDAO;
+import ua.library.DAO.PeopleDAO;
 import ua.library.models.Book;
+import ua.library.models.Person;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/books")
 public class BookController {
     private final BookDAO bookDAO;
+    private final PeopleDAO peopleDAO;
 
     @Autowired
-    public BookController(BookDAO bookDAO) {
+    public BookController(BookDAO bookDAO, PeopleDAO peopleDAO) {
         this.bookDAO = bookDAO;
+        this.peopleDAO = peopleDAO;
     }
 
     @GetMapping()
@@ -24,8 +30,17 @@ public class BookController {
     }
 
     @GetMapping("{id}")
-    public String showBook(@PathVariable("id") int id, Model model){
+    public String showBook(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person){
         model.addAttribute("book", bookDAO.bookOne(id));
+
+        Optional<Person> bookOwner = bookDAO.getBookOwner(id);
+        if(bookOwner.isPresent()){
+            model.addAttribute("owner", bookOwner.get());
+        }
+        else
+        {
+            model.addAttribute("people", peopleDAO.allPersons());
+        }
         return "books/showOne";
     }
 
@@ -59,4 +74,15 @@ public class BookController {
         return "redirect:/books";
     }
 
+    @PatchMapping("/{id}/assign")
+    public String assignBook(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson){
+        bookDAO.assign(id, selectedPerson);
+        return "redirect:/books/" + id;
+    }
+
+    @PatchMapping("/{id}/release")
+    public String releaseBook(@PathVariable("id") int id){
+        bookDAO.release(id);
+        return "redirect:/books/" + id;
+    }
 }
